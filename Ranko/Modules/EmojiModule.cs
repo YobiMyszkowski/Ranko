@@ -234,24 +234,30 @@ namespace Ranko.Modules
         [MinPermissions(AccessLevel.User)]
         public async Task hug([Remainder]SocketGuildUser user)
         {
-            if (user.Status != Discord.UserStatus.Offline)
+            try
             {
-                Bitmap background = LoadPicture("https://i.imgur.com/d38qfFV.png");
-                Bitmap foreground = new Bitmap(15, 15);
-                foreground = LoadPicture(user.GetAvatarUrl());
-                Bitmap bitmap = new Bitmap(background.Width, background.Height);
-
-                using (Graphics g = Graphics.FromImage(bitmap))
+                if (user.Status != Discord.UserStatus.Offline)
                 {
-                    g.DrawImage(background, 0, 0);
-                    g.DrawImage(CropImage(foreground), 174, 126, 75, 75);
-                }
+                    Bitmap background = LoadPicture("https://i.imgur.com/D0MFoAA.png");
+                    Bitmap foreground = new Bitmap(15, 15);
+                    foreground = LoadPicture(user.GetAvatarUrl());
+                    Bitmap bitmap = new Bitmap(background.Width, background.Height);
+                    Bitmap hugger = LoadPicture(Context.User.GetAvatarUrl());
 
-                System.IO.Stream memoryStream = new System.IO.MemoryStream();
-                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(memoryStream, "hug.png");
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.DrawImage(background, 0, 0);
+                        g.DrawImage(CropImage(foreground), 174, 126, 75, 75);
+                        g.DrawImage(CropImage(hugger), 141, 75, 50, 50);
+                    }
+
+                    System.IO.Stream memoryStream = new System.IO.MemoryStream();
+                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                    memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
+                    await Context.Channel.SendFileAsync(memoryStream, "hug.png");
+                }
             }
+            catch(Exception e) { Console.WriteLine(e.Message); }
         }
 
         private static Bitmap LoadPicture(string url)
