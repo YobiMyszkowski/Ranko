@@ -229,6 +229,31 @@ namespace Ranko.Modules
             }
         }
 
+        [Command("hug")]
+        [Remarks("hug mentioned user")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task hug([Remainder]SocketGuildUser user)
+        {
+            if (user.Status != Discord.UserStatus.Offline)
+            {
+                Bitmap background = LoadPicture("https://i.imgur.com/d38qfFV.png");
+                Bitmap foreground = new Bitmap(15, 15);
+                foreground = LoadPicture(user.GetAvatarUrl());
+                Bitmap bitmap = new Bitmap(background.Width, background.Height);
+
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.DrawImage(background, 0, 0);
+                    g.DrawImage(CropImage(foreground), 174, 126, 75, 75);
+                }
+
+                System.IO.Stream memoryStream = new System.IO.MemoryStream();
+                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
+                await Context.Channel.SendFileAsync(memoryStream, "hug.png");
+            }
+        }
+
         private static Bitmap LoadPicture(string url)
         {
             HttpWebRequest wreq;
@@ -287,6 +312,28 @@ namespace Ranko.Modules
             float ScaleRatio = (HeightScaleRatio < WidthScaleRatio) ? ScaleRatio = HeightScaleRatio : ScaleRatio = WidthScaleRatio;
             float ScaleFontSize = PreferedFont.Size * ScaleRatio;
             return new Font(PreferedFont.FontFamily, ScaleFontSize, PreferedFont.Style, GraphicsUnit.Pixel);
+        }
+        public static System.Drawing.Bitmap CropImage(System.Drawing.Bitmap img)
+        {
+            int x = img.Width / 2;
+            int y = img.Height / 2;
+            int r = Math.Min(x, y);
+
+            Bitmap tmp = null;
+            tmp = new Bitmap(2 * r, 2 * r);
+            using (Graphics g = Graphics.FromImage(tmp))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.TranslateTransform(tmp.Width / 2, tmp.Height / 2);
+                System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
+                gp.AddEllipse(0 - r, 0 - r, 2 * r, 2 * r);
+                Region rg = new Region(gp);
+                g.SetClip(rg, System.Drawing.Drawing2D.CombineMode.Replace);
+                Bitmap bmp = new Bitmap(img);
+                g.DrawImage(bmp, new Rectangle(-r, -r, 2 * r, 2 * r), new Rectangle(x - r, y - r, 2 * r, 2 * r), GraphicsUnit.Pixel);
+            }
+
+            return tmp;
         }
     }
 }
