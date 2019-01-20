@@ -36,7 +36,7 @@ namespace Ranko
         public async Task InitializeAsync(IServiceProvider provider)
         {
             _provider = provider;
-            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
         }
 
         public async Task InstallAsync(DiscordSocketClient c)
@@ -46,7 +46,7 @@ namespace Ranko
                                        
             
 
-            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly());    // Load all modules from the assembly.
+            await _cmds.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);    // Load all modules from the assembly.
             
             _client.MessageReceived += HandleCommandAsync;               // Register the messagereceived event to handle commands.
         }

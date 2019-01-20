@@ -16,7 +16,7 @@ namespace Ranko.Modules
     [Name("Role")]
     public class RoleModule : ModuleBase<SocketCommandContext>
     {
-        string[] selfNotRoles = { "Index", "Botbotwot", "Reinbaw", "Retired", "Guest", "@everyone", "Temporary Overlord", "Memegician Odin", "Case", "Emoji manager", "Reinbaw?", "Zombie", "ExDanchou"};
+        string[] selfNotRoles = { "Index" };//, "Botbotwot", "Reinbaw", "Retired", "Guest", "@everyone", "Temporary Overlord", "Memegician Odin", "Case", "Emoji manager", "Reinbaw?", "Zombie", "ExDanchou"};
 
         [Command("rolelist")]
         [Remarks("Message list of all roles")]
